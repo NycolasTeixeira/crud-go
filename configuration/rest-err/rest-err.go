@@ -1,5 +1,7 @@
 package rest_err
 
+import "net/http"
+
 type RestErr struct {
 	Message string   `json:"message"`
 	Err     string   `json:"error"`
@@ -12,6 +14,10 @@ type Causes struct {
 	Message string `json:"message"`
 }
 
+func (r *RestErr) Error() string {
+	return r.Message
+}
+
 func NewRestErr(message, err string, code int, causes []Causes) *RestErr {
 	return &RestErr{
 		Message: message,
@@ -20,4 +26,45 @@ func NewRestErr(message, err string, code int, causes []Causes) *RestErr {
 		Causes:  causes,
 	}
 
+}
+
+func NewBadRequestError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "bad request",
+		Code:    http.StatusBadRequest,
+		//Causes:  causes,
+	}
+}
+
+func NewBadRequestValidationError(message string, causes []Causes) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "bad request",
+		Code:    http.StatusBadRequest,
+		Causes:  causes,
+	}
+}
+
+func NewInternalServerError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "internal server error",
+		Code:    http.StatusInternalServerError,
+	}
+}
+
+func NewNotFoundError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "not found",
+		Code:    http.StatusNotFound,
+	}
+}
+func NewIForbiddenError(message string) *RestErr {
+	return &RestErr{
+		Message: message,
+		Err:     "forbidden",
+		Code:    http.StatusForbidden,
+	}
 }
